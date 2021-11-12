@@ -11,10 +11,10 @@ class WhoAmI(MycroftSkill):
     def handle_i_am_who(self, message):
         recognized = False;
         # Check for matching image
-        
+	
         if recognized:
 		self.speak_dialog('i.am.who')
-        else:
+	else:
 		self.speak_dialog('i.am.who.unknown')
 		# Code to add new face.
 		name = self.get_response('i.am.intent')
