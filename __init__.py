@@ -17,7 +17,7 @@ class WhoAmI(MycroftSkill):
         else:
             self.speak_dialog('i.am.who.unknown')
             # Code to add new face.
-	    name = self.get_response('i.am')
+	    name = self.get_response('i.am.intent')
             self.speak_dialog('i.am.who.known', {'name': name})
 
 
