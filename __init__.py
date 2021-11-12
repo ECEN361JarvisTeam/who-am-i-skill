@@ -1,6 +1,4 @@
 from mycroft import MycroftSkill, intent_file_handler
-from behave import given
-from test.integrationtests.voight_kampff import wait_for_dialog, emit_utterance
 
 
 class WhoAmI(MycroftSkill):
