@@ -5,7 +5,7 @@ import numpy as np
 import maestro
 from maestro_functions import *
 import time
-from os import path, listdir
+from os import path, listdir, getcwd
 
 # face_recognition with OpenCV code based on code from https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 
@@ -16,6 +16,7 @@ class WhoAmI(MycroftSkill):
 
     @intent_file_handler('i.am.who.intent')
     def handle_i_am_who(self, message):
+        print(getcwd())
         videoInput = cv.VideoCapture(0)
 
         if not videoInput.isOpened():
