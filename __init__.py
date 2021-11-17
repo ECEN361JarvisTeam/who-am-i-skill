@@ -1,5 +1,5 @@
 from mycroft import MycroftSkill, intent_file_handler
-import face_recognition as fareg
+#import face_recognition as fareg
 import cv2 as cv
 import numpy as np
 import maestro
