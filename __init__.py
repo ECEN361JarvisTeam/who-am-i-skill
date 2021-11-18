@@ -81,7 +81,8 @@ class WhoAmI(MycroftSkill):
 
             videoInput.release()
 
-        except:
+        except Exception as errorValue:
+            self.speak('i.am.who.error', {'type': type(errorValue), 'args': errorValue.args, 'data': errorValue})
             videoInput.release()
 
 
