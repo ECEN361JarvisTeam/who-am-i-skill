@@ -59,7 +59,7 @@ class WhoAmI(MycroftSkill):
                     newFrame = newFrame[:, :, ::-1]
 
                     unknownImages = fareg.face_locations(newFrame)
-                    unknownEncodes = fareg.face_encodings(unknownImages)
+                    unknownEncodes = fareg.face_encodings(newFrame, unknownImages)
 
                     if len(unknownEncodes) > 0:
                         matches = fareg.compate_faces(faceEncodes, unknownEncodes[0])
