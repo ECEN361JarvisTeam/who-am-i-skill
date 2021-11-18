@@ -62,7 +62,7 @@ class WhoAmI(MycroftSkill):
                     unknownEncodes = fareg.face_encodings(newFrame, unknownImages)
 
                     if len(unknownEncodes) > 0:
-                        matches = fareg.compate_faces(faceEncodes, unknownEncodes[0])
+                        matches = fareg.compare_faces(faceEncodes, unknownEncodes[0])
 
                         if True in matches:
                             recognized = True
