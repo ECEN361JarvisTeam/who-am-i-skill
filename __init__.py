@@ -36,9 +36,9 @@ class WhoAmI(MycroftSkill):
             knownFacePaths = [file for file in listdir(facesRootPath)]
 
             for filePath in knownFacePaths:
-                tempImage = fareg.load_image_file(path.join(facesRootPath, facePath))
+                tempImage = fareg.load_image_file(path.join(facesRootPath, filePath))
                 faceEncodes.append(fareg.face_encodings(tempImage)[0])
-                faceNames.append(facePath.split('.')[0])
+                faceNames.append(filePath.split('.')[0])
 
             # Set servos in viewing position.
             setAllToDefault(m)
