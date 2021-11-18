@@ -30,7 +30,7 @@ class WhoAmI(MycroftSkill):
             tryNum = 0
             faceEncodes = []
             faceNames = []
-            facesRootPath = path.join(path.expanduser('~'), 'mycroft-core', 'faces')
+            facesRootPath = path.join('..', '..', '..', '..', 'home', 'pi', 'mycroft-core', 'faces')
 
             # Load known faces.
             knownFacePaths = [file for file in listdir(facesRootPath)]
