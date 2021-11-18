@@ -18,64 +18,71 @@ class WhoAmI(MycroftSkill):
     def handle_i_am_who(self, message):
         videoInput = cv.VideoCapture(0)
 
-        if not videoInput.isOpened():
-            self.speak_dialog('camera.error')
-            return
-
-        m = maestro.Controller("/dev/ttyACM0")
-        recognized = False;
-        name = 'error unknown'
-        attempts = 10
-        tryNum = 0
-        faceEncodes = []
-        faceNames = []
-        facesRootPath = path.join(path.expanduser('~'), 'mycroft-core', 'faces')
-
-        # Load known faces.
-        knownFacePaths = [file for file in listdir(facesRootPath)]
-
-        for filePath in knownFacePaths:
-            tempImage = fareg.load_image_file(path.join(facesRootPath, facePath))
-            faceEncodes.append(fareg.face_encodings(tempImage)[0])
-            faceNames.append(facePath.split('.')[0])
-
-        # Set servos in viewing position.
-        setAllToDefault(m)
-        self.speak_dialog('face.the.camera')
-        time.sleep(2)
-
-        # Check for matching image.
-        while not recognized or tryNum < attempts:
-            _, newFrame = videoInput.read()
-            if newFrame is None:
+        try:
+            if not videoInput.isOpened():
                 self.speak_dialog('camera.error')
                 return
+
+            m = maestro.Controller("/dev/ttyACM0")
+            recognized = False;
+            name = 'error unknown'
+            attempts = 10
+            tryNum = 0
+            faceEncodes = []
+            faceNames = []
+            facesRootPath = path.join(path.expanduser('~'), 'mycroft-core', 'faces')
+
+            # Load known faces.
+            knownFacePaths = [file for file in listdir(facesRootPath)]
+
+            for filePath in knownFacePaths:
+                tempImage = fareg.load_image_file(path.join(facesRootPath, facePath))
+                faceEncodes.append(fareg.face_encodings(tempImage)[0])
+                faceNames.append(facePath.split('.')[0])
+
+            # Set servos in viewing position.
+            setAllToDefault(m)
+            self.speak_dialog('face.the.camera')
+            time.sleep(2)
+
+            # Check for matching image.
+            while not recognized or tryNum < attempts:
+                _, newFrame = videoInput.read()
+                if newFrame is None:
+                    self.speak_dialog('camera.error')
+                    videoInput.release()
+                    return
+                else:
+                    # Reduce frame size to decrease computation costs
+                    newFrame = cv.resize(newFrame, (0, 0), fx=0.25, fy=0.25)
+                    # Change from OpenCV BGR image to RGB image for face_recognition.
+                    newFrame = newFrame[:, :, ::-1]
+
+                    unknownImages = fareg.face_locations(newFrame)
+                    unknownEncodes = fareg.face_encodings(unknownImages)
+
+                    if len(unknownEncodes) > 0:
+                        matches = fareg.compate_faces(faceEncodes, unknownEncodes[0])
+
+                        if True in matches:
+                            recognized = True
+                            name = faceNames[matches.index(True)]
+
+                    tryNum = tryNum + 1
+
+
+            if recognized:
+                self.speak_dialog('i.am.who', {'name': name})
             else:
-                # Reduce frame size to decrease computation costs
-                newFrame = cv.resize(newFrame, (0, 0), fx=0.25, fy=0.25)
-                # Change from OpenCV BGR image to RGB image for face_recognition.
-                newFrame = newFrame[:, :, ::-1]
+                self.speak_dialog('i.am.who.unknown')
+                # Code to add new face.
+                name = self.get_response('i.am.intent')
+                self.speak_dialog('i.am.who.known', {'name': name})
 
-                unknownImages = fareg.face_locations(newFrame)
-                unknownEncodes = fareg.face_encodings(unknownImages)
+            videoInput.release()
 
-                if len(unknownEncodes) > 0:
-                    matches = fareg.compate_faces(faceEncodes, unknownEncodes[0])
-
-                    if True in matches:
-                        recognized = True
-                        name = faceNames[matches.index(True)]
-
-                tryNum = tryNum + 1
-
-
-        if recognized:
-            self.speak_dialog('i.am.who', {'name': name})
-        else:
-            self.speak_dialog('i.am.who.unknown')
-            # Code to add new face.
-            name = self.get_response('i.am.intent')
-            self.speak_dialog('i.am.who.known', {'name': name})
+        except:
+            videoInput.release()
 
 
 def create_skill():
