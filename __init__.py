@@ -4,6 +4,7 @@ import cv2 as cv
 import numpy as np
 import maestro
 from maestro_functions import *
+from headshots_mycroft import takePicture
 import time
 from os import path, listdir
 
@@ -46,7 +47,7 @@ class WhoAmI(MycroftSkill):
             time.sleep(2)
 
             # Check for matching image.
-            while not recognized or tryNum < attempts:
+            while not recognized and tryNum < attempts:
                 _, newFrame = videoInput.read()
                 if newFrame is None:
                     self.speak_dialog('camera.error')
@@ -74,10 +75,17 @@ class WhoAmI(MycroftSkill):
             if recognized:
                 self.speak_dialog('i.am.who', {'name': name})
             else:
-                self.speak_dialog('i.am.who.unknown')
                 # Code to add new face.
-                name = self.get_response('i.am.intent')
-                self.speak_dialog('i.am.who.known', {'name': name})
+                name = self.get_response('I don\'t know, who are you?')
+                if name is not None:
+                    self.speak_dialog('face.the.camera')
+                    time.sleep(2)
+                    if takePicture(name, facesRootPath, videoInput):
+                        self.speak_dialog('i.am.who.known', {'name': name})
+                    else:
+                        self.speak_dialog('i.am.who.unsaved', {'name': name})
+                else:
+                    else.speak_dialog('i.am.who.no.name')
 
             videoInput.release()
 
