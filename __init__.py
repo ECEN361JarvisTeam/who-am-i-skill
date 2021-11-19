@@ -85,7 +85,7 @@ class WhoAmI(MycroftSkill):
                     else:
                         self.speak_dialog('i.am.who.unsaved', {'name': name})
                 else:
-                    else.speak_dialog('i.am.who.no.name')
+                    self.speak_dialog('i.am.who.no.name')
 
             videoInput.release()
 
